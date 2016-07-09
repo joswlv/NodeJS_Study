@@ -15,8 +15,10 @@
         .disable { background: red; }
         .disable:hover {background: darkred}
     </style>
-    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <!-- 소켓 생성 -->
     <script>
         // 소켓 이벤트를 수행합니다.
@@ -27,6 +29,11 @@
             $target.removeClass('enable');
             $target.addClass('disable');
         });
+        socket.on('cancel', function (data) {
+            var $target = $('div[data-x = ' + data.x + '][data-y = ' + data.y + ']');
+            $target.removeClass('disable');
+            $target.addClass('enable');
+        });
     </script>
     <!-- 초기 좌석 생성 -->
     <script>
@@ -35,32 +42,47 @@
             var onClickSeat = function () {
                 var x = $(this).attr('data-x');
                 var y = $(this).attr('data-y');
-                if (confirm('좌석을 예약하시겠습니까?')) {
-
-                    socket.emit('reserve', {
-                        x: x,
-                        y: y
-                    });
-                    console.log(x);
-                    location.reload();
-                } else {
-                    alert('취소되었습니다.');
-                }
+                $( "#dialog" ).dialog({
+                    resizable: false,
+                    height:140,
+                    modal: true,
+                    buttons: {
+                        "예매하기": function() {
+                            $(this).off('click');
+                            socket.emit('reserve', {
+                                x: x,
+                                y: y
+                            });
+                        },
+                        "취소": function() {
+                            alert("취소했습니다")
+                        }
+                    }
+                });
             };
+
             var onCancel = function () {
                 var x = $(this).attr('data-x');
                 var y = $(this).attr('data-y');
-                if (confirm('예약을 취소하시겠어요?')){
-                    $(this).off('click');
-                    socket.emit('cancel', {
-                        x: x,
-                        y: y
-                    });
-                    location.reload();
-                } else {
-                    alert('걍 보는 걸로~');
-                }
+                $( "#canceldialog" ).dialog({
+                    resizable: false,
+                    height:140,
+                    modal: true,
+                    buttons: {
+                        "예매취소하기": function() {
+                            $(this).off('click');
+                            socket.emit('cancel', {
+                                x: x,
+                                y: y
+                            });
+                        },
+                        "취소": function() {
+                            alert("취소했습니다")
+                        }
+                    }
+                });
             };
+
             // Ajax를 수행합니다.
             $.getJSON('/seats', { dummy: new Date().getTime() }, function (data) {
                 // 좌석을 생성합니다.
@@ -90,6 +112,12 @@
     </script>
 </head>
 <body>
+<div id="dialog" title="영화예매 할꺼 말꺼?" style="display: none">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>영화예매?</p>
+</div>
 
+<div id="canceldialog" title="영화 예매 취소?" style="display: none">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>예매취소?</p>
+</div>
 </body>
 </html>

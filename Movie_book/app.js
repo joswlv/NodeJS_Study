@@ -51,8 +51,11 @@ io.sockets.on('connection', function (socket) {
         seats[data.y][data.x] = 2;
         io.sockets.emit('reserve', data);
     });
+});
+
+io.sockets.on('connection',function (socket) {
     socket.on('cancel',function (data) {
         seats[data.y][data.x] = 1;
         io.sockets.emit('cancel', data);
     });
-});
+})
