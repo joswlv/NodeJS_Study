@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Node.js Programming for Modern Web</title>
+    <title>Movie_booked</title>
     <style>
         .line { overflow: hidden; }
         .seat {
@@ -13,6 +13,7 @@
         .enable { background: gray; }
         .enable:hover { background: black; }
         .disable { background: red; }
+        .disable:hover {background: darkred}
     </style>
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
@@ -35,13 +36,29 @@
                 var x = $(this).attr('data-x');
                 var y = $(this).attr('data-y');
                 if (confirm('좌석을 예약하시겠습니까?')) {
-                    $(this).off('click');
+
                     socket.emit('reserve', {
                         x: x,
                         y: y
                     });
+                    console.log(x);
+                    location.reload();
                 } else {
                     alert('취소되었습니다.');
+                }
+            };
+            var onCancel = function () {
+                var x = $(this).attr('data-x');
+                var y = $(this).attr('data-y');
+                if (confirm('예약을 취소하시겠어요?')){
+                    $(this).off('click');
+                    socket.emit('cancel', {
+                        x: x,
+                        y: y
+                    });
+                    location.reload();
+                } else {
+                    alert('걍 보는 걸로~');
                 }
             };
             // Ajax를 수행합니다.
@@ -57,12 +74,12 @@
                             'data-x': indexX,
                             'data-y': indexY
                         }).appendTo($line);
-                        if (seat == 1) {
+                        if (seat == 1 && $output.class != 'disable') {
                             // 좌석이 비어 있으면 enable 클래스와 click 리스너를 추가합니다.
                             $output.addClass('enable').on('click', onClickSeat);
-                        } else if (seat == 2) {
+                        } else if (seat == 2 && $output.class !='enable') {
                             // 좌석이 사용 불가능하면 disable 클래스를 추가합니다.
-                            $output.addClass('disable');
+                            $output.addClass('disable').on('click',onCancel);
                         }
                     });
                     // 문서 객체를 추가합니다.

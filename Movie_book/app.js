@@ -4,11 +4,8 @@ var http = require('http');
 var fs = require('fs');
 /*
 앞으로 추가할 사항
-예약 취소
+예약 취소(완료 - 실시간 예매취소는 어떻게??)
 커플예약
-날짜선택
-DB연동
-영화선택
 */
 
 // 변수를 선언합니다.
@@ -48,9 +45,14 @@ var httpServer =http.createServer(app).listen(3000, function(req,res){
 
 // 소켓 서버를 생성 및 실행합니다.
 var io = require('socket.io').listen(httpServer);
+
 io.sockets.on('connection', function (socket) {
     socket.on('reserve', function (data) {
         seats[data.y][data.x] = 2;
         io.sockets.emit('reserve', data);
+    });
+    socket.on('cancel',function (data) {
+        seats[data.y][data.x] = 1;
+        io.sockets.emit('cancel', data);
     });
 });
