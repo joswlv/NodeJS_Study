@@ -2,9 +2,14 @@
 var express = require('express');
 var http = require('http');
 var fs = require('fs');
-
-
-
+/*
+앞으로 추가할 사항
+예약 취소
+커플예약
+날짜선택
+DB연동
+영화선택
+*/
 
 // 변수를 선언합니다.
 var seats = [
