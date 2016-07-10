@@ -4,8 +4,8 @@ var http = require('http');
 var fs = require('fs');
 /*
 앞으로 추가할 사항
-예약 취소(완료 - 실시간 예매취소는 어떻게??)
-커플예약
+예약 취소(완료)
+커플예약(완료)
 */
 
 // 변수를 선언합니다.
@@ -52,10 +52,22 @@ io.sockets.on('connection', function (socket) {
         io.sockets.emit('reserve', data);
     });
 });
+io.sockets.on('connection', function (socket) {
+    socket.on('coupleset', function (data) {
+        seats[data.y][data.x] = 2;
+        io.sockets.emit('coupleset', data);
+    });
+});
 
 io.sockets.on('connection',function (socket) {
     socket.on('cancel',function (data) {
         seats[data.y][data.x] = 1;
         io.sockets.emit('cancel', data);
     });
-})
+});
+io.sockets.on('connection',function (socket) {
+    socket.on('cancelcouple', function (data) {
+        seats[data.y][data.x] = 1;
+        io.sockets.emit('cancelcouple', data);
+    });
+});
