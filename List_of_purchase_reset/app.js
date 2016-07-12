@@ -19,13 +19,13 @@ function Product(name, image, price, count) {
 
 // 변수를 선언합니다.
 var products = [
-    new Product('JavaScript', 'chrome.png', 28000, 30),
-    new Product('jQuery', 'chrome.png', 28000, 30),
-    new Product('Node.js', 'chrome.png', 32000, 30),
-    new Product('Socket.io', 'chrome.png', 17000, 30),
-    new Product('Connect', 'chrome.png', 18000, 30),
-    new Product('Express', 'chrome.png', 31000, 30),
-    new Product('EJS', 'chrome.png', 12000, 30)
+    new Product('JavaScript', 'chrome.png', 28000, 2),
+    new Product('jQuery', 'chrome.png', 28000, 2),
+    new Product('Node.js', 'chrome.png', 32000, 2),
+    new Product('Socket.io', 'chrome.png', 17000, 2),
+    new Product('Connect', 'chrome.png', 18000, 2),
+    new Product('Express', 'chrome.png', 31000, 2),
+    new Product('EJS', 'chrome.png', 12000, 2)
 ];
 
 // 웹 서버를 생성합니다.
@@ -33,23 +33,23 @@ var app = express();
 var server = http.createServer(app);
 
 // 웹 서버를 설정합니다.
-app.use(app.router);
+
 app.use(express.static(__dirname + '/public'));
 
 // 라우트를 수행합니다.
 app.get('/', function (request, response) {
     // HTMLPage.html 파일을 읽습니다.
-    var HTMLPage = fs.readFileSync('HTMLPage.html', 'utf8');
+    var index = fs.readFileSync('index.html', 'utf8');
 
     // 응답합니다.
-    response.send(ejs.render(HTMLPage, {
+    response.send(ejs.render(index, {
         products: products
     }));
 });
 
 // 웹 서버를 실행합니다.
-server.listen(52273, function () {
-    console.log('Server Running at http://127.0.0.1:52273');
+server.listen(3000, function () {
+    console.log('Server Running at http://127.0.0.1:3000');
 });
 
 // 소켓 서버를 생성 및 실행합니다.
@@ -86,7 +86,7 @@ io.sockets.on('connection', function (socket) {
         cart[index].index = index;
         cart[index].timerID = setTimeout(function () {
             onReturn(index);
-        }, 1000 * 60 * 10);
+        }, 1000 * 10);
 
         // count 이벤트를 발생시킵니다.
         io.sockets.emit('count', {
